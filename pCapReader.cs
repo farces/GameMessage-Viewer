@@ -93,6 +93,7 @@ namespace GameMessageViewer
         public static List<MemoryStream> ReconSingleFileSharpPcap(string capFile)
         {
             var capture = new CaptureFileReaderDevice(capFile);
+            capture.Filter = "tcp port 1119 and ip net 12.129.237.0/24";
             var retVal = new List<MemoryStream>();
 
             //Register our handler function to the 'packet arrival' event
@@ -128,7 +129,7 @@ namespace GameMessageViewer
             TcpPacket tcpPacket = Packet.ParsePacket(LinkLayers.Ethernet, e.Packet.Data).PayloadPacket.PayloadPacket as TcpPacket;
 
             // THIS FILTERS D3 TRAFFIC, GS AS WELL AS MOONET
-            if (tcpPacket != null && (tcpPacket.SourcePort == 1119 || tcpPacket.DestinationPort == 1119))
+            if (tcpPacket != null)
             {
                 Connection c = new Connection(tcpPacket);
                 if (!sharpPcapDict.ContainsKey(c))
